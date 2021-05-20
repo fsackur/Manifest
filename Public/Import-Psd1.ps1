@@ -21,5 +21,15 @@ function Import-Psd1
 
     $Path = $Path | Resolve-Psd1Path
 
-    Get-Content $Path -Raw | Invoke-Expression
+
+    $Psd1Ast = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$null, [ref]$null)
+    if (-not $Psd1Ast)
+    {
+        Write-Error "Failed to parse '$Path'." -ErrorAction Stop
+    }
+
+    # The actual hashtable content; type HashtableAst
+    $HashtableAst = $Psd1Ast.EndBlock.Statements[0].PipelineElements[0].Expression
+
+    Parse-HashtableAst $HashtableAst
 }
