@@ -31,5 +31,5 @@ function Import-Psd1
     # The actual hashtable content; type HashtableAst
     $HashtableAst = $Psd1Ast.EndBlock.Statements[0].PipelineElements[0].Expression
 
-    Parse-HashtableAst $HashtableAst
+    ConvertFrom-ExpressionAst $HashtableAst
 }

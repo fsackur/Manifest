@@ -1,14 +1,14 @@
-function Parse-HashtableAst
+function ConvertFrom-ExpressionAst
 {
     param
     (
         [Parameter(Mandatory)]
-        [System.Management.Automation.Language.HashtableAst]$HashtableAst
+        [System.Management.Automation.Language.ExpressionAst]$ExpressionAst
     )
 
     $Output = [ordered]@{}
 
-    $KvpTuples = $HashtableAst.KeyValuePairs
+    $KvpTuples = $ExpressionAst.KeyValuePairs
     foreach ($KvpTuple in $KvpTuples)
     {
         $KeyAst  = $KvpTuple.Item1
@@ -32,7 +32,7 @@ function Parse-HashtableAst
 
             ([System.Management.Automation.Language.HashtableAst])
             {
-                $Output.Add($Key, (Import-HashtableAst $ExprAst))
+                $Output.Add($Key, (ConvertFrom-ExpressionAst $ExprAst))
             }
         }
     }
