@@ -19,7 +19,12 @@ function ConvertFrom-ExpressionAst
         {
             ([System.Management.Automation.Language.StringConstantExpressionAst])
             {
-                return $ExpressionAst.Value
+                $Value = $ExpressionAst.Value
+                foreach ($Property in $ExpressionAst.Extent.PSObject.Properties)
+                {
+                    $Value | Add-Member NoteProperty $Property.Name $Property.Value -Force
+                }
+                return $Value
             }
 
             ([System.Management.Automation.Language.ArrayLiteralAst])
