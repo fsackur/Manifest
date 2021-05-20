@@ -15,7 +15,7 @@ function ConvertFrom-ExpressionAst
         $Key     = $KeyAst.Value       # We know it's a BareWord
 
         $ValAst  = $KvpTuple.Item2
-        $ExprAst = $ValAst.PipelineElements[0].Expression    # We know value will always have this
+        $ExprAst = $ValAst.PipelineElements.Expression    # We know value will always have this
 
         switch ($ExprAst.GetType())
         {
@@ -26,7 +26,7 @@ function ConvertFrom-ExpressionAst
 
             ([System.Management.Automation.Language.ArrayExpressionAst])
             {
-                $ElementAsts = $ExprAst.SubExpression.Statements[0].PipelineElements[0].Expression.Elements
+                $ElementAsts = $ExprAst.SubExpression.Statements.PipelineElements.Expression.Elements
                 $Output.Add($Key, $ElementAsts.Value)
             }
 
