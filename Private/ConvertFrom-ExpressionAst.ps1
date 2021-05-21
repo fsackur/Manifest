@@ -33,15 +33,13 @@ function ConvertFrom-ExpressionAst
 
             ([System.Management.Automation.Language.ArrayLiteralAst])
             {
-                Write-Output @($ExpressionAst.Elements | ConvertFrom-ExpressionAst -AsExtent:$AsExtent) -NoEnumerate
-                return
+                return ,@($ExpressionAst.Elements | ConvertFrom-ExpressionAst -AsExtent:$AsExtent)
             }
 
             ([System.Management.Automation.Language.ArrayExpressionAst])
             {
                 $SubExprAst = $ExpressionAst.SubExpression.Statements.PipelineElements.Expression
-                Write-Output @($SubExprAst | ConvertFrom-ExpressionAst -AsExtent:$AsExtent) -NoEnumerate
-                return
+                return ,@($SubExprAst | ConvertFrom-ExpressionAst -AsExtent:$AsExtent)
             }
 
             ([System.Management.Automation.Language.HashtableAst])
