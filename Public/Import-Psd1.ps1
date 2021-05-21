@@ -15,7 +15,9 @@ function Import-Psd1
     param
     (
         [Parameter(Mandatory, Position = 0)]
-        [string]$Path
+        [string]$Path,
+
+        [switch]$AsExtent
     )
 
 
@@ -31,5 +33,5 @@ function Import-Psd1
     # The actual hashtable content; type HashtableAst
     $HashtableAst = $Psd1Ast.EndBlock.Statements.PipelineElements.Expression
 
-    ConvertFrom-ExpressionAst $HashtableAst
+    ConvertFrom-ExpressionAst $HashtableAst -AsExtent:$AsExtent
 }

@@ -4,7 +4,9 @@ function ConvertFrom-ExpressionAst
     (
         [Parameter(Mandatory, ValueFromPipeline)]
         [AllowNull()]
-        [System.Management.Automation.Language.ExpressionAst]$ExpressionAst
+        [System.Management.Automation.Language.ExpressionAst]$ExpressionAst,
+
+        [switch]$AsExtent
     )
 
 
@@ -19,24 +21,26 @@ function ConvertFrom-ExpressionAst
         {
             ([System.Management.Automation.Language.StringConstantExpressionAst])
             {
-                $Value = $ExpressionAst.Value
-                foreach ($Property in $ExpressionAst.Extent.PSObject.Properties)
+                if ($AsExtent)
                 {
-                    $Value | Add-Member NoteProperty $Property.Name $Property.Value -Force
+                    return $ExpressionAst.Extent
                 }
-                return $Value
+                else
+                {
+                    return $ExpressionAst.Value
+                }
             }
 
             ([System.Management.Automation.Language.ArrayLiteralAst])
             {
-                Write-Output @($ExpressionAst.Elements | ConvertFrom-ExpressionAst) -NoEnumerate
+                Write-Output @($ExpressionAst.Elements | ConvertFrom-ExpressionAst -AsExtent:$AsExtent) -NoEnumerate
                 return
             }
 
             ([System.Management.Automation.Language.ArrayExpressionAst])
             {
                 $SubExprAst = $ExpressionAst.SubExpression.Statements.PipelineElements.Expression
-                Write-Output @($SubExprAst | ConvertFrom-ExpressionAst) -NoEnumerate
+                Write-Output @($SubExprAst | ConvertFrom-ExpressionAst -AsExtent:$AsExtent) -NoEnumerate
                 return
             }
 
@@ -52,7 +56,7 @@ function ConvertFrom-ExpressionAst
 
                     $_ValAst = $KvpTuple.Item2
                     $ExprAst = $_ValAst.PipelineElements.Expression    # We know value will always have this
-                    $_Value  = $ExprAst | ConvertFrom-ExpressionAst
+                    $_Value  = $ExprAst | ConvertFrom-ExpressionAst -AsExtent:$AsExtent
 
                     $Output.Add($Key, $_Value)
                 }
